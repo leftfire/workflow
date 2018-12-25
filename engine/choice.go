@@ -1,6 +1,6 @@
 package engine
 
-import "github.com/jteeuwen/go-pkg-xmlx"
+import "github.com/mattn/go-pkg-xmlx"
 
 // Choice 流程步骤的选择项, 如: 同意 / 不同意
 type Choice struct {

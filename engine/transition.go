@@ -2,7 +2,7 @@ package engine
 
 import (
 	"errors"
-	"github.com/jteeuwen/go-pkg-xmlx"
+	"github.com/mattn/go-pkg-xmlx"
 )
 
 // Transition 迁移, 对应流程图上节点之间的线条

@@ -2,7 +2,7 @@ package engine
 
 import (
 	"errors"
-	"github.com/jteeuwen/go-pkg-xmlx"
+	"github.com/mattn/go-pkg-xmlx"
 	"github.com/widuu/gojson"
 	"strconv"
 )

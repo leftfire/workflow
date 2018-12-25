@@ -2,7 +2,7 @@ package engine
 
 import (
 	"errors"
-	"github.com/jteeuwen/go-pkg-xmlx"
+	"github.com/mattn/go-pkg-xmlx"
 )
 
 // Status 流程状态, 也就是去到的环节
