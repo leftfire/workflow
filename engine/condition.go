@@ -69,7 +69,7 @@ func NewCondition(n *xmlx.Node) (*Condition, error) {
 }
 
 // Eval 计算条件结果
-// appdataJSON: appdata 的json字符串
+// appdataJSON: appdata 的json字符串，只支持字典格式
 // 返回bool的结果
 func (c *Condition) Eval(appdataJSON string) (bool, error) {
 	appdata := gojson.Json(appdataJSON)
@@ -78,7 +78,7 @@ func (c *Condition) Eval(appdataJSON string) (bool, error) {
 	}
 
 	re := false
-	//todo: 这里目前只支持1级属性的获取, 以后可以扩展成: p1.pp2.ppp3,多级属性获取.
+	//这里目前只支持1级属性的获取, 要求提前处理好传入的参数。
 	dataValue := appdata.Get(c.DataKey)
 	if dataValue.IsValid() == false {
 		return false, errors.New("key not found in appdata ")

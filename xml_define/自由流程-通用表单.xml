@@ -1,4 +1,3 @@
-<!--"80ca18b9-7278-4637-b6ed-76a26a106997"-->
 <?xml version="1.0" encoding="UTF-8" ?>
 <workflow>
     <flowstatus>
@@ -13,7 +12,7 @@
             </participant>
             <choices>
                 <choice name="同意">
-                    <transition trueto="审批"> 
+                    <transition trueto="审批">
                     </transition>
                 </choice>
                 <choice name="拒绝">

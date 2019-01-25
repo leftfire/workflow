@@ -1,11 +1,4 @@
-package engine
-
-// FlowUser 用户
-type FlowUser struct {
-	Userid    string `json:"userid,omitempty"`
-	UserName  string `json:"username,omitempty"`
-	HeadPhoto string `json:"headphoto,omitempty"`
-}
+package entity
 
 // OrgService 为流程提供组织架构信息的服务接口
 type OrgService interface {
@@ -21,4 +14,11 @@ type OrgService interface {
 	FindUserByDept(departid string) (us []*FlowUser, err error)
 	//根据角色找到所有用户
 	FindUserByRole(role string) (us []*FlowUser, err error)
+}
+
+// FlowUser 用户
+type FlowUser struct {
+	Userid    string `json:"userid,omitempty"`
+	UserName  string `json:"username,omitempty"`
+	HeadPhoto string `json:"headphoto,omitempty"`
 }

@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"github.com/mattn/go-pkg-xmlx"
+	. "github.com/pobearm/workflow/entity"
 )
 
 // Status 流程状态, 也就是去到的环节

@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"github.com/mattn/go-pkg-xmlx"
+	. "github.com/pobearm/workflow/entity"
 	"github.com/pobearm/workflow/util"
 	"strings"
 )

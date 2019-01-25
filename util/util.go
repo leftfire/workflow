@@ -1,8 +1,12 @@
 package util
 
 import (
+	"errors"
+	"github.com/jackc/pgx"
+	"regexp"
 	"strconv"
 	"strings"
+	// "time"
 )
 
 const (
@@ -57,4 +61,27 @@ func StringInSlice(str string, strSlice []string) (found bool) {
 		}
 	}
 	return false
+}
+
+//从数据库中读取连接串,传入企业e号
+func GetConnCfg(constr string) (*pgx.ConnConfig, error) {
+	s := `jdbc:postgresql://(?P<host>[\.\d]+):(?P<port>[\d]+)/(?P<db>[\w]+);userid=(?P<userid>[\w]+);password=(?P<pass>[\S]+)`
+	re := regexp.MustCompile(s)
+	match := re.FindStringSubmatch(constr)
+	if len(match) != 6 {
+		return nil, errors.New("connstring error")
+	}
+	port, err := strconv.Atoi(match[2])
+	if err != nil {
+		return nil, errors.New("port in connstring error")
+	}
+
+	cfg := &pgx.ConnConfig{
+		Host:     match[1],
+		Port:     uint16(port),
+		Database: match[3],
+		User:     match[4],
+		Password: match[5],
+	}
+	return cfg, nil
 }

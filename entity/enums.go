@@ -1,4 +1,4 @@
-package engine
+package entity
 
 // FlowActorType 流程参与者类型
 type FlowActorType uint32

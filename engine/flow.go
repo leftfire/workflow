@@ -28,7 +28,7 @@ func NewFlow(flowid, flowname, flowxml string, versionno int32) (*Flow, error) {
 	return flow, nil
 }
 
-// StatuCount 状态是数量?
+// StatuCount 步骤数量
 func (f *Flow) StatuCount() int {
 	return len(f.FlowStatus)
 }

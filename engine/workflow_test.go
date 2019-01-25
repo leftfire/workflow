@@ -1,13 +1,12 @@
-package engine
+package engine_test
 
 import (
+	"github.com/pobearm/workflow/engine"
 	"testing"
-
-	"xtion.net/mcrm/workflow"
 )
 
 const (
-	conn_str = "jdbc:postgresql://211.155.27.215:5432/xw_dl_1007807;userid=crm;password=crm"
+	conn_str = "jdbc:postgresql://ip:5432/dbname;userid=crm;password=crm"
 )
 
 func Test_NewFlow3(t *testing.T) {

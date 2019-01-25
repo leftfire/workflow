@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	. "github.com/pobearm/workflow/entity"
+	"github.com/pobearm/workflow/service"
 	"github.com/pobearm/workflow/util"
 	"time"
 )
@@ -16,18 +18,6 @@ const (
 	// StatusAbandon 丢弃
 	StatusAbandon = "abandoned"
 )
-
-// NextStatuInfo 流程下一步的信息
-type NextStatuInfo struct {
-	// StepName 步骤名称
-	StepName string
-	// Users 流程参与人
-	Users []*FlowUser
-	// IsFree 是否自由流程
-	IsFree bool
-	// SelectType 如何选择人员 0表示只能选Users数组内的人 1表示可以选择所有的人
-	SelectType bool
-}
 
 // Workflow 流程引擎对象
 type Workflow struct {
@@ -48,16 +38,19 @@ type Workflow struct {
 // New_Workflow 创建一个新的工作流对象.
 // connstr: db连接串, 这个是多租户模式需要, 一个流程服务可以服务于多个租户数据库, 租户按数据库隔离.
 // 如果非多租户模式使用, db连接串写在服务配置文件.
-func NewWorkflow(connstr string) (*Workflow, error) {
-	fds, err := ServiceFactory{}.NewFlowDefineService(connstr)
+//
+func NewWorkflow(connstr string, serviceType int) (*Workflow, error) {
+
+	fact := service.New_ServiceFactory(connstr)
+	fds, err := fact.GetFlowDefineService(serviceType)
 	if err != nil {
 		return nil, err
 	}
-	ogs, err := ServiceFactory{}.NewOrgService(connstr)
+	ogs, err := fact.GetOrgService(serviceType)
 	if err != nil {
 		return nil, err
 	}
-	css, err := ServiceFactory{}.NewCaseService(connstr)
+	css, err := fact.GetCaseService(serviceType)
 	if err != nil {
 		return nil, err
 	}
@@ -80,22 +73,28 @@ func (w *Workflow) LoadWorkflow(caseid string, appdata string) error {
 	}
 	w.Fcase = fc
 
-	wfd, err := w.FlowDefSRV.GetFlowByVersionNo(fc.CaseInfo.FlowID, fc.CaseInfo.VersionNo)
+	// wfd, err := w.FlowDefSRV.GetFlowByVersionNo(fc.CaseInfo.FlowID, fc.CaseInfo.VersionNo)
+	flowinfo, err := w.FlowDefSRV.GetWorkFlowDetail(fc.CaseInfo.FlowID)
 	if err != nil {
 		return err
 	}
+	wfd, _ := NewFlow(flowinfo.FlowID, flowinfo.Name, flowinfo.FlowXML, fc.CaseInfo.VersionNo)
 	w.FlowDef = wfd
 	return nil
 }
 
 // CreateWorkflow 创建一个新的流程实例, 返回caseid
-func (w *Workflow) CreateWorkflow(caseid, flowid, appdata string, user FlowUser) (string, string, error) {
+func (w *Workflow) CreateWorkflow(versionno int32, flowid, appdata string,
+	user FlowUser) (caseid string, err error) {
 	w.Appdata = appdata
 	//找到流程定义
-	wfd, err := w.FlowDefSRV.GetFlow(flowid)
+	// wfd, err := w.FlowDefSRV.GetFlow(flowid)
+	flowinfo, err := w.FlowDefSRV.GetWorkFlowDetail(flowid)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
+	wfd, _ := NewFlow(flowinfo.FlowID, flowinfo.Name, flowinfo.FlowXML, versionno)
+
 	w.FlowDef = wfd
 
 	if caseid == "" {
@@ -109,30 +108,33 @@ func (w *Workflow) CreateWorkflow(caseid, flowid, appdata string, user FlowUser)
 		}
 	}
 	if statusname == "" {
-		return "", "", errors.New("get sequence 0 status name error")
+		return "", errors.New("get sequence 0 status name error")
 	}
 	w.Fcase = NewStartFlowCase(user.Userid, user.UserName, caseid, flowid, statusname, wfd.VersionNo)
 
 	//保存到数据库
-	serialnumberTemp := ""
-	versionno := wfd.VersionNo
-	if serialnumberTemp, err = w.CaseSRV.SaveNewCase(w.Fcase, versionno); err != nil {
-		return "", "", err
+	if err = w.CaseSRV.SaveNewCase(w.Fcase, versionno); err != nil {
+		return "", err
 	}
-	return serialnumberTemp, caseid, nil
+	return caseid, nil
 }
 
 //
-func (w *Workflow) PreCreateWorkflow(flowid string, appdata string, userid, username string) (string, error) {
+func (w *Workflow) PreCreateWorkflow(flowid string, versionno int32, appdata string, userid,
+	username string) (caseid string, err error) {
 	w.Appdata = appdata
 	//找到流程定义
-	wfd, err := w.FlowDefSRV.GetFlow(flowid)
+	flowinfo, err := w.FlowDefSRV.GetWorkFlowDetail(flowid)
 	if err != nil {
 		return "", err
 	}
+	wfd, _ := NewFlow(flowinfo.FlowID, flowinfo.Name, flowinfo.FlowXML, versionno)
+
 	w.FlowDef = wfd
 
-	caseid := uuid.New().String()
+	// caseid := uuid.New().String()
+	// todo: uuid 应该在服务内生成，并返回回来。
+	caseid = "need a uuid "
 	statusname := ""
 	for _, s := range w.FlowDef.FlowStatus {
 		if s.Sequence == 0 {
@@ -343,14 +345,14 @@ func (w *Workflow) runIntoStep(ns_name, choice, mark string, cs *Status,
 
 	//push msg todo
 	//回写发送时间
-	caseinfo := &CaseInfo{
-		CaseID: w.Fcase.CaseInfo.CaseID,
-		ItemID: ni.ItemID,
-	}
-	err = w.CaseSRV.WriteBackSendTime(caseinfo)
-	if err != nil {
-		return "", err
-	}
+	// caseinfo := &CaseInfo{
+	// 	CaseID: w.Fcase.CaseInfo.CaseID,
+	// 	ItemID: ni.ItemID,
+	// }
+	// err = w.CaseSRV.WriteBackSendTime(caseinfo)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	return ni.StepName, nil
 }
@@ -423,14 +425,14 @@ func (w *Workflow) JumpToStep(itemid int32, stepname, choice, mark string, user 
 
 	//push msg todo
 	//回写发送时间
-	caseinfo := &CaseInfo{
-		CaseID: w.Fcase.CaseInfo.CaseID,
-		ItemID: w.Fcase.CaseInfo.ItemID,
-	}
-	err = w.CaseSRV.WriteBackSendTime(caseinfo)
-	if err != nil {
-		return err
-	}
+	// caseinfo := &CaseInfo{
+	// 	CaseID: w.Fcase.CaseInfo.CaseID,
+	// 	ItemID: w.Fcase.CaseInfo.ItemID,
+	// }
+	// err = w.CaseSRV.WriteBackSendTime(caseinfo)
+	// if err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
@@ -466,10 +468,11 @@ func (w *Workflow) HandNextStep(nid int32, ns *Status, user *FlowUser, appdata s
 		//新建下一步的caseitem
 		ci = NewCaseItem(nid, ns.Name, user.Userid, user.UserName)
 		//判断是否有设置代理人, 如果有就标记代理人
-		agent, ok := w.CaseSRV.FindAgent(user.Userid)
-		if ok {
-			ci.SetAgent(agent.Userid, agent.UserName)
-		}
+		//agent, ok := w.CaseSRV.FindAgent(user.Userid)
+		//if ok {
+		//todo: 类的定义位置有问题
+		//ci.SetAgent(agent.Userid, agent.UserName)
+		//}
 		ci.StepStatus = StepStatusNew
 	}
 	//修改case的数据
