@@ -1,7 +1,8 @@
 package engine_test
 
 import (
-	"github.com/pobearm/workflow/engine"
+	workflow "github.com/pobearm/workflow/engine"
+	. "github.com/pobearm/workflow/entity"
 	"testing"
 )
 
@@ -10,18 +11,17 @@ const (
 )
 
 func Test_NewFlow3(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
+	// userid := "675608"
+	// username := "明亮9"
 	wfid := "954a0d8b-554b-4a7e-9423-dee0dece4c25"
-	wf, err := workflow.New_Workflow(conn_str)
+	wf, err := workflow.NewWorkflow(conn_str, 0)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	caseid, errc := wf.CreateWorkflow(wfid, appdata, userid, username)
+	appdata := `{"amount":"15001","product":"1001"}`
+	user := FlowUser{Userid: "647749", UserName: "po0"}
+	caseid, errc := wf.CreateWorkflow(0, wfid, appdata, user)
 	if errc != nil {
 		t.Error(errc)
 	}
@@ -34,7 +34,7 @@ func Test_NewFlow3(t *testing.T) {
 		return
 	}
 	showNsif(nsif0, t)
-	user0 := &workflow.FlowUser{Userid: "647749", UserName: "熊利祥0"}
+	user0 := &FlowUser{Userid: "647749", UserName: "po0"}
 	if instep, err := wf.Run(0, "", "mark0", user0); err != nil {
 		t.Error(err)
 		return
@@ -47,7 +47,7 @@ func Test_NewFlow3(t *testing.T) {
 		return
 	}
 	showNsif(nsif1, t)
-	user1 := &workflow.FlowUser{Userid: "647748", UserName: "熊利祥1"}
+	user1 := &FlowUser{Userid: "647748", UserName: "po1"}
 	if instep, err := wf.Run(1, "同意", "mark1", user1); err != nil {
 		t.Error(err)
 		return
@@ -60,7 +60,7 @@ func Test_NewFlow3(t *testing.T) {
 		return
 	}
 	showNsif(nsif2, t)
-	user2 := &workflow.FlowUser{Userid: "647748", UserName: "熊利祥2"}
+	user2 := &FlowUser{Userid: "647748", UserName: "po2"}
 	if instep, err := wf.Run(2, "同意", "mark1", user2); err != nil {
 		t.Error(err)
 		return
@@ -73,7 +73,7 @@ func Test_NewFlow3(t *testing.T) {
 		return
 	}
 	showNsif(nsif3, t)
-	user3 := &workflow.FlowUser{Userid: "647748", UserName: "熊利祥3"}
+	user3 := &FlowUser{Userid: "647748", UserName: "po3"}
 	if instep, err := wf.Run(3, "不同意", "mark1", user3); err != nil {
 		t.Error(err)
 		return
@@ -86,7 +86,7 @@ func Test_NewFlow3(t *testing.T) {
 		return
 	}
 	showNsif(nsif4, t)
-	user4 := &workflow.FlowUser{Userid: "647748", UserName: "熊利祥3"}
+	user4 := &FlowUser{Userid: "647748", UserName: "po3"}
 	if instep, err := wf.Run(4, "", "mark1", user4); err != nil {
 		t.Error(err)
 		return
@@ -108,18 +108,17 @@ func Test_NewFlow3(t *testing.T) {
 }
 
 func Test_NewFlow22(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
+	// userid := "675608"
+	// username := "明亮9"
 	wfid := "10ca18b9-7278-4637-b6ed-76a26a106997"
-	wf, err := workflow.New_Workflow(conn_str)
+	wf, err := workflow.NewWorkflow(conn_str, 0)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	caseid, errc := wf.CreateWorkflow(wfid, appdata, userid, username)
+	appdata := `{"amount":"15001","product":"1001"}`
+	user := FlowUser{Userid: "647749", UserName: "po0"}
+	caseid, errc := wf.CreateWorkflow(0, wfid, appdata, user)
 	if errc != nil {
 		t.Error(errc)
 	}
@@ -190,18 +189,17 @@ func Test_NewFlow22(t *testing.T) {
 }
 
 func Test_NewFlow2(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
+	// userid := "675608"
+	// username := "明亮9"
 	wfid := "10ca18b9-7278-4637-b6ed-76a26a106997"
-	wf, err := workflow.New_Workflow(conn_str)
+	wf, err := workflow.NewWorkflow(conn_str, 0)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	caseid, errc := wf.CreateWorkflow(wfid, appdata, userid, username)
+	appdata := `{"amount":"15001","product":"1001"}`
+	user := FlowUser{Userid: "647749", UserName: "po0"}
+	caseid, errc := wf.CreateWorkflow(0, wfid, appdata, user)
 	if errc != nil {
 		t.Error(errc)
 	}
@@ -247,7 +245,7 @@ func Test_NewFlow2(t *testing.T) {
 	}
 }
 
-func showNsif(nsif *workflow.NextStatuInfo, t *testing.T) {
+func showNsif(nsif *NextStatuInfo, t *testing.T) {
 	t.Log("next step is: ", nsif.StepName)
 	t.Log("is free: ", nsif.IsFree)
 	if !nsif.IsFree {
@@ -259,19 +257,18 @@ func showNsif(nsif *workflow.NextStatuInfo, t *testing.T) {
 }
 
 func Test_NewFlow(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
+	// userid := "675608"
+	// username := "明亮9"
 	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
 
-	wf, err := workflow.New_Workflow(conn_str)
+	wf, err := workflow.NewWorkflow(conn_str, 0)
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	caseid, errc := wf.CreateWorkflow(wfid, appdata, userid, username)
+	appdata := `{"amount":"15001","product":"1001"}`
+	user := FlowUser{Userid: "647749", UserName: "po0"}
+	caseid, errc := wf.CreateWorkflow(0, wfid, appdata, user)
 	if errc != nil {
 		t.Error(errc)
 	}
@@ -402,397 +399,397 @@ func Test_NewFlow(t *testing.T) {
 	//---------------------------------------------------
 }
 
-func Test_GetTodoCases1(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	//查询条件
-	flowname := ""
-	userid := "647749"
-	cl, err := wh.GetTodoCases(flowname, userid, 1, 10)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", cl)
-}
+// func Test_GetTodoCases1(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	//查询条件
+// 	flowname := ""
+// 	userid := "647749"
+// 	cl, err := wh.GetTodoCases(flowname, userid, 1, 10)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", cl)
+// }
 
-func Test_GetTodoCases2(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	//查询条件
-	flowname := "测试"
-	userid := "647749"
-	cl, err := wh.GetTodoCases(flowname, userid, 1, 10)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", cl)
-}
+// func Test_GetTodoCases2(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	//查询条件
+// 	flowname := "测试"
+// 	userid := "647749"
+// 	cl, err := wh.GetTodoCases(flowname, userid, 1, 10)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", cl)
+// }
 
-func Test_GetWorkFlows1(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	fl, err := wh.GetWorkFlows("a,b`c'd;e--f", 1, 10)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Log(fl)
-}
+// func Test_GetWorkFlows1(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	fl, err := wh.GetWorkFlows("a,b`c'd;e--f", 1, 10)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Log(fl)
+// }
 
-func Test_GetWorkFlows2(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-	}
-	fl, err := wh.GetWorkFlows("", 1, 10)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Log(fl)
-}
+// func Test_GetWorkFlows2(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	fl, err := wh.GetWorkFlows("", 1, 10)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Log(fl)
+// }
 
-func Test_GetCaseDetail1(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	caseid := "a7fd2c1b-c966-4493-a257-73fab468511f"
-	fc, err := wh.GetCaseDetail(caseid)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", fc)
-}
+// func Test_GetCaseDetail1(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	caseid := "a7fd2c1b-c966-4493-a257-73fab468511f"
+// 	fc, err := wh.GetCaseDetail(caseid)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", fc)
+// }
 
-func Test_GetCaseDetail2(t *testing.T) {
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	caseid := "a57979a1-e63a-4f3c-87cb-2b5620f3fc17"
-	fc, err := wh.GetCaseDetail(caseid)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", fc)
-}
+// func Test_GetCaseDetail2(t *testing.T) {
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	caseid := "a57979a1-e63a-4f3c-87cb-2b5620f3fc17"
+// 	fc, err := wh.GetCaseDetail(caseid)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", fc)
+// }
 
-func Test_AddCase1(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
-	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	biz1 := "12323232"
-	biz2 := "2222222222"
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	cs, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", cs)
-}
+// func Test_AddCase1(t *testing.T) {
+// 	userid := "675608"
+// 	username := "明亮9"
+// 	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	biz1 := "12323232"
+// 	biz2 := "2222222222"
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	cs, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", cs)
+// }
 
-func Test_AddCase2(t *testing.T) {
-	userid := "675608"
-	username := "明亮9"
-	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	biz1 := "12323232"
-	biz2 := ""
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	cs, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", cs)
-}
+// func Test_AddCase2(t *testing.T) {
+// 	userid := "675608"
+// 	username := "明亮9"
+// 	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	biz1 := "12323232"
+// 	biz2 := ""
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	cs, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", cs)
+// }
 
-func Test_CommitCase1(t *testing.T) {
-	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
-	choice := "同意"
-	remark := "...dsfdsf..df."
-	userid := "675608"
-	username := "明亮9"
-	itemid := int32(0)
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	flowuser := &workflow.FlowUser{
-		Userid:   userid,
-		UserName: username,
-	}
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-	t.Log(instep)
-}
+// func Test_CommitCase1(t *testing.T) {
+// 	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
+// 	choice := "同意"
+// 	remark := "...dsfdsf..df."
+// 	userid := "675608"
+// 	username := "明亮9"
+// 	itemid := int32(0)
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	flowuser := &FlowUser{
+// 		Userid:   userid,
+// 		UserName: username,
+// 	}
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// 	t.Log(instep)
+// }
 
-func Test_PreCommitCase1(t *testing.T) {
-	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
-	choice := "同意"
-	itemid := int32(1)
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	nsif, err := wh.PreCommitCase(caseid, choice, itemid, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", nsif)
-}
+// func Test_PreCommitCase1(t *testing.T) {
+// 	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
+// 	choice := "同意"
+// 	itemid := int32(1)
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	nsif, err := wh.PreCommitCase(caseid, choice, itemid, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", nsif)
+// }
 
-func Test_PreCommitCase2(t *testing.T) {
-	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
-	choice := "不同意"
-	itemid := int32(1)
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	nsif, err := wh.PreCommitCase(caseid, choice, itemid, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("%#v", nsif)
-}
+// func Test_PreCommitCase2(t *testing.T) {
+// 	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
+// 	choice := "不同意"
+// 	itemid := int32(1)
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	nsif, err := wh.PreCommitCase(caseid, choice, itemid, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("%#v", nsif)
+// }
 
-func Test_AbandonCase(t *testing.T) {
-	caseid := "6c553ac7-fe92-4237-9a42-e925a63ab208"
-	choice := "同意"
-	remark := "我要作废"
-	itemid := int32(1)
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.AbandonCase(caseid, choice, remark, itemid, appdata)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_AbandonCase(t *testing.T) {
+// 	caseid := "6c553ac7-fe92-4237-9a42-e925a63ab208"
+// 	choice := "同意"
+// 	remark := "我要作废"
+// 	itemid := int32(1)
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.AbandonCase(caseid, choice, remark, itemid, appdata)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
 
-func Test_FinishCase(t *testing.T) {
-	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
-	choice := "同意"
-	remark := "我要作废"
-	itemid := int32(1)
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.FinishCase(caseid, choice, remark, itemid, appdata)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_FinishCase(t *testing.T) {
+// 	caseid := "0ed936f1-560f-45a1-8269-db4b5d540c37"
+// 	choice := "同意"
+// 	remark := "我要作废"
+// 	itemid := int32(1)
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.FinishCase(caseid, choice, remark, itemid, appdata)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
 
-func Test_SendbackCase(t *testing.T) {
-	choice := "同意"
-	remark := "我要作废"
-	userid := "675608"
-	username := "明亮9"
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	biz1 := "12323232"
-	biz2 := ""
-	caseid, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("caseid: %#v", caseid)
-	//----------------------
-	itemid := int32(0)
-	flowuser := &workflow.FlowUser{
-		Userid:   userid,
-		UserName: username,
-	}
-	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-	t.Log(instep)
-	//----------------------
-	itemid = int32(1)
-	err3 := wh.SendbackCase(caseid, choice, remark, itemid, appdata)
-	if err3 != nil {
-		t.Error(err3)
-		return
-	}
-}
+// func Test_SendbackCase(t *testing.T) {
+// 	choice := "同意"
+// 	remark := "我要作废"
+// 	userid := "675608"
+// 	username := "明亮9"
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	biz1 := "12323232"
+// 	biz2 := ""
+// 	caseid, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("caseid: %#v", caseid)
+// 	//----------------------
+// 	itemid := int32(0)
+// 	flowuser := &workflow.FlowUser{
+// 		Userid:   userid,
+// 		UserName: username,
+// 	}
+// 	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// 	t.Log(instep)
+// 	//----------------------
+// 	itemid = int32(1)
+// 	err3 := wh.SendbackCase(caseid, choice, remark, itemid, appdata)
+// 	if err3 != nil {
+// 		t.Error(err3)
+// 		return
+// 	}
+// }
 
-func Test_FallbackCase(t *testing.T) {
-	choice := "同意"
-	remark := "我要作废"
-	userid := "675608"
-	username := "明亮9"
-	appdata := make(map[string]string)
-	appdata["amount"] = "15001"
-	appdata["product"] = "1001"
-	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	biz1 := "12323232"
-	biz2 := ""
-	caseid, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	t.Logf("caseid: %#v", caseid)
-	//----------------------
-	itemid := int32(0)
-	flowuser := &workflow.FlowUser{
-		Userid:   userid,
-		UserName: username,
-	}
-	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-	t.Log(instep)
-	itemid = int32(1)
-	instep, err3 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
-	if err3 != nil {
-		t.Error(err3)
-		return
-	}
-	t.Log(instep)
-	//----------------------
-	itemid = int32(2)
-	err4 := wh.FallbackCase(caseid, choice, remark, itemid, appdata)
-	if err4 != nil {
-		t.Error(err4)
-		return
-	}
-}
+// func Test_FallbackCase(t *testing.T) {
+// 	choice := "同意"
+// 	remark := "我要作废"
+// 	userid := "675608"
+// 	username := "明亮9"
+// 	appdata := make(map[string]string)
+// 	appdata["amount"] = "15001"
+// 	appdata["product"] = "1001"
+// 	wfid := "aa9cadc9-35d0-4888-9852-b9395b55ee55"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	biz1 := "12323232"
+// 	biz2 := ""
+// 	caseid, err := wh.AddCase(wfid, username, userid, biz1, biz2, appdata)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	t.Logf("caseid: %#v", caseid)
+// 	//----------------------
+// 	itemid := int32(0)
+// 	flowuser := &workflow.FlowUser{
+// 		Userid:   userid,
+// 		UserName: username,
+// 	}
+// 	instep, err2 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// 	t.Log(instep)
+// 	itemid = int32(1)
+// 	instep, err3 := wh.CommitCase(caseid, choice, remark, itemid, flowuser, appdata)
+// 	if err3 != nil {
+// 		t.Error(err3)
+// 		return
+// 	}
+// 	t.Log(instep)
+// 	//----------------------
+// 	itemid = int32(2)
+// 	err4 := wh.FallbackCase(caseid, choice, remark, itemid, appdata)
+// 	if err4 != nil {
+// 		t.Error(err4)
+// 		return
+// 	}
+// }
 
-func Test_ReadedCase(t *testing.T) {
-	caseid := "12cbec16-44f8-4f33-9aaf-78f85fd3b3aa"
-	itemid := int32(3)
-	userid := "675608"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.Readed(itemid, caseid, userid)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_ReadedCase(t *testing.T) {
+// 	caseid := "12cbec16-44f8-4f33-9aaf-78f85fd3b3aa"
+// 	itemid := int32(3)
+// 	userid := "675608"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.Readed(itemid, caseid, userid)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
 
-func Test_SetAgent1(t *testing.T) {
-	userid := "675608"
-	agentid := "647749"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.SetAgent(userid, agentid)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_SetAgent1(t *testing.T) {
+// 	userid := "675608"
+// 	agentid := "647749"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.SetAgent(userid, agentid)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
 
-func Test_SetAgent2(t *testing.T) {
-	userid := "661639"
-	agentid := "675608"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.SetAgent(userid, agentid)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_SetAgent2(t *testing.T) {
+// 	userid := "661639"
+// 	agentid := "675608"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.SetAgent(userid, agentid)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
 
-func Test_UnsetAgent(t *testing.T) {
-	userid := "661639"
-	wh, err := workflow.New_FLowHelper(conn_str)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	err2 := wh.UnsetAgent(userid)
-	if err2 != nil {
-		t.Error(err2)
-		return
-	}
-}
+// func Test_UnsetAgent(t *testing.T) {
+// 	userid := "661639"
+// 	wh, err := workflow.New_FLowHelper(conn_str)
+// 	if err != nil {
+// 		t.Error(err)
+// 		return
+// 	}
+// 	err2 := wh.UnsetAgent(userid)
+// 	if err2 != nil {
+// 		t.Error(err2)
+// 		return
+// 	}
+// }
