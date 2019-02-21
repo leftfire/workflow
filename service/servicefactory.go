@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
+
 	. "github.com/pobearm/workflow/entity"
 )
 
 const (
-	SERVICETYPE_EMPTY int = 0
-	SERVICETYPE_PG    int = 1
+	SERVICETYPE_EMPTY int = 0 //服务的实现是空的，用于代码调试
+	SERVICETYPE_PG    int = 1 //服务的实现基于postgresql数据库
 )
 
 // ServiceFactory 服务工厂
